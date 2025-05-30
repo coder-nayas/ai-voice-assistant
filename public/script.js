@@ -41,14 +41,14 @@ if ('webkitSpeechRecognition' in window) {
     getAIResponse(transcript);
   };
 
-  micButton.addEventListener("click", () =>{
-    // to stop the ongoing speech before starting recognition
-    if(window.speechSynthesis.speaking){
+  micButton.addEventListener("click", () 
+    => {
+    if (window.speechSynthesis.speaking) {
     window.speechSynthesis.cancel();
   }
     recognition.start();
 });
-else {
+} else {
   outputText.innerText = "Speech recognition not supported.";
 }
 
