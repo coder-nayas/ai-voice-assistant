@@ -1,7 +1,7 @@
-
 let micButton = document.getElementById("mic-button");
 let outputText = document.getElementById("output-text");
 let loader = document.getElementById("waveform-loader");
+
 let isSpeaking = false;
 
 function toggleLoader(show) {
@@ -41,13 +41,13 @@ if ('webkitSpeechRecognition' in window) {
     getAIResponse(transcript);
   };
 
-  micButton.addEventListener("click", () 
-    => {
+  // ✅ Updated handler here:
+  micButton.addEventListener("click", () => {
     if (window.speechSynthesis.speaking) {
-    window.speechSynthesis.cancel();
-  }
-    recognition.start();
-});
+      window.speechSynthesis.cancel();  // stop voice first
+    }
+    recognition.start();  // then start listening
+  });
 } else {
   outputText.innerText = "Speech recognition not supported.";
 }
@@ -58,6 +58,7 @@ async function getAIResponse(prompt) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ prompt })
   });
+
   const data = await response.json();
   const reply = data.reply;
   outputText.innerText += `\nNayas: ${reply}`;
@@ -66,9 +67,10 @@ async function getAIResponse(prompt) {
 
 function speakResponse(text) {
   const synth = window.speechSynthesis;
-  synth.cancel();
-  const sentences = text.match(/[^\.\!\?]+[\.\!\?]+/g) || [text];
+  synth.cancel(); // Cancel any previous speech
+  const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [text];
   let index = 0;
+
   function speakNext() {
     if (index < sentences.length) {
       const utterance = new SpeechSynthesisUtterance(sentences[index].trim());
@@ -80,5 +82,6 @@ function speakResponse(text) {
       synth.speak(utterance);
     }
   }
+
   speakNext();
 }
